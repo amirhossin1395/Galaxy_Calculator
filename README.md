@@ -85,6 +85,89 @@
 | % | درصد |
 | ( ) | پرانتز |
 
+# 🌌 Galaxy Calculator
 
+**Developer:** Amirhosein Haji Moradkhani  
+**Version:** 1.00  
+All Rights Reserved  
+**Created:** 2026-08-12 (August 12, 2026)  
+
+---
+
+## 📱 Introduction
+
+**Galaxy Calculator** is a professional and comprehensive calculator designed to deliver the best computational experience. This calculator surpasses popular mobile calculators such as those on Samsung, Apple, Xiaomi, and Huawei devices by offering advanced features and a user-friendly interface.
+
+---
+
+## ✨ Features
+
+### 🧮 Calculation Modes
+- **Basic Mode:** Addition, subtraction, multiplication, division, percentage, and sign change.
+- **Scientific Mode:** Sine, cosine, tangent, logarithm, natural logarithm, square root, square, cube, factorial, power (xⁿ), and parentheses.
+
+### 🔄 Advanced Unit Converters
+- Volume (Liter, Milliliter, Cubic Meter, Gallon)
+- Area (Square Meter, Square Kilometer, Hectare, Square Foot)
+- Weight (Kilogram, Gram, Pound, Ounce)
+- Length (Meter, Kilometer, Mile, Foot, Inch)
+- Speed (m/s, km/h, mph, knot)
+- Pressure (Pascal, Bar, Atmosphere, psi)
+- Energy (Joule, Calorie, Watt-hour, Electronvolt)
+- Temperature (Celsius, Fahrenheit, Kelvin)
+
+### 📜 Smart History
+- Stores up to 2,000 calculations
+- Searchable history
+- Displays both expression and result
+
+### 🌍 Multi-Language Support
+- Persian (Farsi)
+- English
+- Arabic
+
+### 🎨 Visual Themes
+- Dark theme
+- Light theme
+- Device dark theme (system default)
+
+### ⌨️ Full Input Support
+- Keyboard (numbers, operators, Enter, Backspace, Escape)
+- Mouse
+- Touch (mobile-friendly)
+
+### 📋 Additional Features
+- Copy result with one click
+- Fully offline (no internet connection required)
+- Optimized for mobile, tablet, and laptop screens
+
+---
+
+## 🚀 How to Use
+
+1. Open the `کهکشان حساب.html` file in your web browser.
+2. Select your preferred language (Persian, English, or Arabic).
+3. Use the tabs at the top to switch between modes:
+   - **Basic:** Daily calculations
+   - **Scientific:** Advanced functions
+   - **Converter:** Unit conversions
+   - **Help:** Complete guide
+   - **About:** Project information
+4. Use the search box to find past calculations in the history.
+5. Click the copy button to copy the current result.
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| 0-9 | Numbers |
+| + - * / | Operators |
+| Enter or = | Calculate |
+| Backspace | Delete last character |
+| Escape | Clear all |
+| % | Percentage |
+| ( ) | Parentheses |
 
 ## 📄 ساختار پروژه
