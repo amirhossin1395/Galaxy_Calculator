@@ -173,5 +173,3 @@ Galaxy-Calculator/
 | Escape | Clear all |
 | % | Percentage |
 | ( ) | Parentheses |
-
-## 📄 ساختار پروژه
