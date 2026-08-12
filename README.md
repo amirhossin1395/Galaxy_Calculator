@@ -166,10 +166,6 @@ All Rights Reserved
 | + - * / | Operators |
 | Enter or = | Calculate |
 | Backspace | Delete last character |
-Galaxy-Calculator/
-├── LICENSE
-├── README.md
-└── کهکشان حساب.html
 | Escape | Clear all |
 | % | Percentage |
 | ( ) | Parentheses |
