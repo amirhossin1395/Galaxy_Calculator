@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>کهکشان حساب | امیرحسین حاجی مرادخانی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #0b1120; padding: 15px; transition: background 0.3s; }
+        body.light { background: #f0f4f8; }
+        body.dark { background: #0b1120; }
+        body.device-dark { background: #0a0a0a; }
+        .wrap { width: 100%; max-width: 460px; margin: 0 auto; }
+        .calc { background: #1a2332; border-radius: 32px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); max-height: 98vh; overflow-y: auto; scroll-behavior: smooth; transition: background 0.3s; }
+        body.light .calc { background: #ffffff; box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
+        body.device-dark .calc { background: #111111; }
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .header h1 { font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #2563eb, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .owner { font-size: 0.6rem; opacity: 0.7; background: #2d3b52; padding: 2px 12px; border-radius: 20px; color: #94a3b8; }
+        body.light .owner { background: #e9edf2; color: #64748b; }
+        .top-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .top-actions button { background: #2d3b52; border: none; border-radius: 20px; padding: 4px 12px; color: #e2e8f0; font-weight: 600; cursor: pointer; font-size: 0.65rem; }
+        body.light .top-actions button { background: #e9edf2; color: #1e293b; }
+        .display-box { background: #0f172a; border-radius: 24px; padding: 14px 18px; min-height: 90px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; margin-bottom: 12px; border: 1px solid #1e293b; }
+        body.light .display-box { background: #f1f5f9; border-color: #e2e8f0; }
+        .expr-line { color: #94a3b8; font-size: 0.85rem; min-height: 24px; width: 100%; text-align: right; direction: rtl; }
+        body.light .expr-line { color: #64748b; }
+        .result-line { color: #facc15; font-size: 2.6rem; font-weight: 700; width: 100%; text-align: right; direction: rtl; overflow-x: auto; white-space: pre-wrap; word-break: break-all; min-height: 50px; }
+        body.light .result-line { color: #1e293b; }
+        .result-line.error { color: #ef4444; font-size: 1.3rem; }
+        .history-box { background: #0f172a; border-radius: 16px; padding: 8px 12px; max-height: 100px; overflow-y: auto; margin-bottom: 12px; font-size: 0.75rem; border: 1px solid #1e293b; }
+        body.light .history-box { background: #f8fafc; border-color: #e2e8f0; }
+        .history-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #1e293b; direction: rtl; }
+        body.light .history-item { border-bottom-color: #e2e8f0; }
+        .history-item .h-expr { color: #94a3b8; }
+        .history-item .h-res { color: #60a5fa; font-weight: 600; }
+        body.light .history-item .h-res { color: #2563eb; }
+        .history-empty { color: #475569; text-align: center; padding: 8px 0; }
+        .search-history { width: 100%; padding: 6px 12px; border-radius: 20px; border: 1px solid #1e293b; background: #0f172a; color: #e2e8f0; font-size: 0.8rem; margin-bottom: 8px; }
+        body.light .search-history { background: #f8fafc; border-color: #d1d9e6; color: #0f172a; }
+        .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+        .tab { padding: 6px 12px; border: none; border-radius: 30px; background: #2d3b52; color: #94a3b8; font-weight: 600; cursor: pointer; flex: 1 0 auto; min-width: 50px; text-align: center; font-size: 0.7rem; }
+        body.light .tab { background: #e9edf2; color: #64748b; }
+        .tab.active { background: #2563eb; color: white; }
+        .btn-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
+        .btn { padding: 14px 0; border: none; border-radius: 18px; font-size: 1rem; font-weight: 600; cursor: pointer; background: #1e293b; color: #e2e8f0; transition: 0.1s; }
+        body.light .btn { background: #f1f5f9; color: #0f172a; }
+        .btn:active { transform: scale(0.92); }
+        .btn.op { background: #1e3a8a; color: #93c5fd; }
+        body.light .btn.op { background: #dbeafe; color: #1e40af; }
+        .btn.fn { background: #312e81; color: #a5b4fc; }
+        body.light .btn.fn { background: #e0e7ff; color: #4338ca; }
+        .btn.eq { background: #2563eb; color: white; }
+        .btn.span2 { grid-column: span 2; }
+        .panel { display: none; margin-top: 10px; }
+        .panel.active { display: block; }
+        .convert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .conv-item { background: #0f172a; padding: 10px; border-radius: 16px; display: flex; flex-direction: column; gap: 4px; }
+        body.light .conv-item { background: #f8fafc; }
+        .conv-item label { color: #94a3b8; font-size: 0.65rem; }
+        body.light .conv-item label { color: #64748b; }
+        .conv-item input, .conv-item select { padding: 8px 10px; border-radius: 12px; border: 1px solid #1e293b; background: #1a2332; color: #e2e8f0; font-size: 0.75rem; width: 100%; }
+        body.light .conv-item input, body.light .conv-item select { background: white; border-color: #d1d9e6; color: #0f172a; }
+        .conv-item .conv-res { color: #60a5fa; font-weight: 700; min-height: 20px; font-size: 0.8rem; }
+        .conv-item button { background: #2563eb; border: none; padding: 8px; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; font-size: 0.75rem; }
+        .about-box { background: #0f172a; border-radius: 16px; padding: 16px; margin-top: 12px; border: 1px solid #1e293b; color: #94a3b8; font-size: 0.8rem; text-align: center; }
+        body.light .about-box { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+        .about-box a { color: #60a5fa; text-decoration: none; }
+        body.light .about-box a { color: #2563eb; }
+        .footer { text-align: center; color: #475569; font-size: 0.6rem; margin-top: 10px; }
+        .help-box { background: #0f172a; border-radius: 16px; padding: 14px; margin-top: 10px; border: 1px solid #1e293b; color: #94a3b8; font-size: 0.75rem; text-align: right; direction: rtl; max-height: 200px; overflow-y: auto; }
+        body.light .help-box { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+        .lang-selector { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
+        .lang-btn { padding: 4px 16px; border: 2px solid #2d3b52; border-radius: 30px; background: transparent; color: #94a3b8; font-weight: 600; cursor: pointer; font-size: 0.7rem; }
+        .lang-btn.active { border-color: #2563eb; background: #2563eb; color: white; }
+        body.light .lang-btn { border-color: #d1d9e6; color: #64748b; }
+        body.light .lang-btn.active { border-color: #2563eb; background: #2563eb; color: white; }
+        @media (max-width: 450px) { .calc { padding: 12px; } .result-line { font-size: 2rem; } .btn { font-size: 0.85rem; padding: 12px 0; } .convert-grid { grid-template-columns: 1fr; } .btn-grid { grid-template-columns: repeat(4, 1fr); } .header h1 { font-size: 0.9rem; } }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="calc">
+
+        <!-- ====== هدر ====== -->
+        <div class="header">
+            <h1>🧮 کهکشان حساب</h1>
+            <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
+                <span class="owner">© امیرحسین حاجی مرادخانی</span>
+                <div class="top-actions">
+                    <button onclick="copyResult()">📋 کپی</button>
+                    <button onclick="clearHistory()">🗑️</button>
+                    <button onclick="toggleTheme()"><span id="themeIcon">🌙</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== انتخاب زبان ====== -->
+        <div class="lang-selector">
+            <button class="lang-btn active" data-lang="fa" onclick="setLang('fa')">🇮🇷 فارسی</button>
+            <button class="lang-btn" data-lang="en" onclick="setLang('en')">🇬🇧 English</button>
+            <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">🇸🇦 العربية</button>
+        </div>
+
+        <!-- ====== نمایشگر ====== -->
+        <div class="display-box">
+            <div class="expr-line" id="exprLine"></div>
+            <div class="result-line" id="resultLine">0</div>
+        </div>
+
+        <!-- ====== تاریخچه ====== -->
+        <input class="search-history" id="searchHistory" placeholder="🔍 جستجو در تاریخچه..." oninput="renderHistory()">
+        <div class="history-box" id="historyBox"><div class="history-empty">تاریخچه خالی است</div></div>
+
+        <!-- ====== تب‌ها ====== -->
+        <div class="tabs">
+            <button class="tab active" data-mode="basic" onclick="switchMode('basic')">پایه</button>
+            <button class="tab" data-mode="sci" onclick="switchMode('sci')">علمی</button>
+            <button class="tab" data-mode="convert" onclick="switchMode('convert')">تبدیل</button>
+            <button class="tab" data-mode="help" onclick="switchMode('help')">📖 راهنما</button>
+            <button class="tab" data-mode="about" onclick="switchMode('about')">ℹ️ درباره</button>
+        </div>
+
+        <!-- ====== دکمه‌ها ====== -->
+        <div class="btn-grid" id="btnGrid"></div>
+
+        <!-- ====== تبدیل ====== -->
+        <div class="panel" id="convertPanel"><div class="convert-grid" id="convertGrid"></div></div>
+
+        <!-- ====== راهنما ====== -->
+        <div class="panel" id="helpPanel">
+            <div class="help-box">
+                <h3 style="color:#facc15; text-align:center; margin-bottom:8px;">📖 راهنمای کهکشان حساب</h3>
+                <p><strong>⌨️ کیبورد:</strong> اعداد 0-9، عملگرها (+ - * /)، Enter (=)، Backspace (⌫)، Escape (C)</p>
+                <p><strong>🖱️ موس/لمس:</strong> کلیک روی دکمه‌ها برای محاسبه</p>
+                <p><strong>🧮 پایه:</strong> جمع، تفریق، ضرب، تقسیم، درصد، ±</p>
+                <p><strong>🔬 علمی:</strong> sin, cos, tan, log, ln, √, x², x³, !, xⁿ</p>
+                <p><strong>🔄 تبدیل:</strong> حجم، مساحت، وزن، طول، سرعت، فشار، انرژی، دما</p>
+                <p><strong>🔍 تاریخچه:</strong> جستجو در تاریخچه با کادر جستجو</p>
+                <p><strong>📋 کپی:</strong> کپی نتیجه با دکمه کپی</p>
+                <p><strong>🌙 تم:</strong> تغییر تم با دکمه بالا</p>
+            </div>
+        </div>
+
+        <!-- ====== درباره ما ====== -->
+        <div class="panel" id="aboutPanel">
+            <div class="about-box">
+                <h3 style="color:#facc15; margin-bottom:8px;">🌌 کهکشان حساب</h3>
+                <p><strong>کهکشان حساب</strong> بهترین ماشین حساب جهان است که توسط <strong>امیرحسین حاجی مرادخانی</strong> طراحی و توسعه یافته است.</p>
+                <p style="margin-top:6px;">🔹 دقت بی‌نهایت در محاسبات</p>
+                <p>🔹 پشتیبانی از ۳ زبان (فارسی، انگلیسی، عربی)</p>
+                <p>🔹 ۸ نوع تبدیل پیشرفته</p>
+                <p>🔹 حالت علمی کامل (sin, cos, tan, log, ln, √, !, xⁿ)</p>
+                <p>🔹 تاریخچه با قابلیت جستجو</p>
+                <p>🔹 کپی نتیجه</p>
+                <p>🔹 کاملاً آفلاین و امن</p>
+                <p style="margin-top:10px;">📌 <strong>سورس کد:</strong> <a href="https://github.com/amirhossin1395/Galaxy_Calculator" target="_blank">github.com/amirhossin1395</a></p>
+                <p style="margin-top:6px; font-size:0.65rem; opacity:0.7;">نسخه 1.00 | تمامی حقوق محفوظ است</p>
+            </div>
+        </div>
+
+        <div class="footer">⌨️ کیبورد و موس و لمس پشتیبانی می‌شود | نسخه 1.00</div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ====== کهکشان حساب | امیرحسین حاجی مرادخانی | نسخه 1.00 ======
+// ============================================================
+
+// ---------- STATE ----------
+let display = '0';
+let prev = '';
+let op = null;
+let resetNext = false;
+let history = [];
+let currentMode = 'basic';
+let theme = 'dark';
+let currentLang = 'fa';
+
+const resultEl = document.getElementById('resultLine');
+const exprEl = document.getElementById('exprLine');
+const historyEl = document.getElementById('historyBox');
+const btnGrid = document.getElementById('btnGrid');
+const convertPanel = document.getElementById('convertPanel');
+const helpPanel = document.getElementById('helpPanel');
+const aboutPanel = document.getElementById('aboutPanel');
+const convertGrid = document.getElementById('convertGrid');
+
+// ---------- دیکشنری ----------
+const lang = {
+    fa: { copy:'📋 کپی', del:'🗑️', search:'🔍 جستجو در تاریخچه...', empty:'تاریخچه خالی است', basic:'پایه', sci:'علمی', convert:'تبدیل', help:'📖 راهنما', about:'ℹ️ درباره', owner:'© امیرحسین حاجی مرادخانی', version:'نسخه 1.00', footer:'⌨️ کیبورد و موس و لمس پشتیبانی می‌شود | نسخه 1.00' },
+    en: { copy:'📋 Copy', del:'🗑️', search:'🔍 Search history...', empty:'History is empty', basic:'Basic', sci:'Scientific', convert:'Convert', help:'📖 Help', about:'ℹ️ About', owner:'© Amirhosein Haji Moradkhani', version:'Version 1.00', footer:'⌨️ Keyboard & Mouse & Touch supported | Version 1.00' },
+    ar: { copy:'📋 نسخ', del:'🗑️', search:'🔍 بحث في السجل...', empty:'السجل فارغ', basic:'أساسي', sci:'علمي', convert:'تحويل', help:'📖 دليل', about:'ℹ️ حول', owner:'© أميرحسين حاجي مرادخاني', version:'الإصدار 1.00', footer:'⌨️ يدعم لوحة المفاتيح والماوس واللمس | الإصدار 1.00' }
+};
+
+// ---------- دکمه‌ها ----------
+const basicBtns = ['C','⌫','%','÷','7','8','9','×','4','5','6','-','1','2','3','+','0','.','±','='];
+const sciBtns = ['C','⌫','%','÷','√','7','8','9','×','x²','4','5','6','-','x³','1','2','3','+','(','0','.','±','=',')','sin','cos','tan','log','ln','!','xⁿ'];
+
+function renderButtons() {
+    btnGrid.innerHTML = '';
+    let btns = currentMode === 'basic' ? basicBtns : sciBtns;
+    btns.forEach(label => {
+        const b = document.createElement('button');
+        b.className = 'btn';
+        if (['÷','×','-','+','='].includes(label)) b.classList.add('op');
+        if (['√','x²','x³','xⁿ','!','%','±','C','⌫','sin','cos','tan','log','ln','(',')'].includes(label)) b.classList.add('fn');
+        if (label === '=') b.classList.add('eq');
+        if (label === '0') b.classList.add('span2');
+        b.textContent = label;
+        b.onclick = () => handleClick(label);
+        btnGrid.appendChild(b);
+    });
+}
+
+// ---------- کلیک ----------
+function handleClick(label) {
+    if (currentMode === 'convert' || currentMode === 'help' || currentMode === 'about') { simpleClick(label); return; }
+    if (label === 'C') { reset(); return; }
+    if (label === '⌫') { display = display.slice(0,-1) || '0'; update(); return; }
+    if (label === '±') { display = String(-parseFloat(display)||0); update(); return; }
+    if (label === '%') { 
+        const num = parseFloat(display);
+        if (op) { display = String(num / 100 * parseFloat(prev)); }
+        else { display = String(num / 100); }
+        update(); return;
+    }
+    if (label === '√') { const v=parseFloat(display); if(v<0){error('عدد منفی');return;} display=String(Math.sqrt(v)); update(); return; }
+    if (label === 'x²') { display=String(Math.pow(parseFloat(display)||0,2)); update(); return; }
+    if (label === 'x³') { display=String(Math.pow(parseFloat(display)||0,3)); update(); return; }
+    if (label === '!') { const n=parseInt(display); if(n<0||isNaN(n)){error('عدد صحیح');return;} let f=1; for(let i=2;i<=n;i++)f*=i; display=String(f); update(); return; }
+    if (label === 'xⁿ') { const p=prompt('توان:','2'); if(p!==null){display=String(Math.pow(parseFloat(display)||0,parseFloat(p)||0));update();} return; }
+    if (['sin','cos','tan'].includes(label)) {
+        const v = parseFloat(display) * Math.PI / 180;
+        display = String(Math[label](v));
+        update(); return;
+    }
+    if (label === 'log') { display=String(Math.log10(parseFloat(display)||0)); update(); return; }
+    if (label === 'ln') { display=String(Math.log(parseFloat(display)||0)); update(); return; }
+    if (label === '(' || label === ')') { display += label; update(); return; }
+    if (['÷','×','-','+'].includes(label)) {
+        if (op && !resetNext) calc();
+        prev = display;
+        op = label;
+        resetNext = true;
+        exprEl.textContent = prev + ' ' + opSymbol(label);
+        return;
+    }
+    if (label === '=') { calc(); return; }
+    if (resetNext) { display='0'; resetNext=false; }
+    if (label==='.' && display.includes('.')) return;
+    if (display==='0' && label!=='.') display='';
+    display += label;
+    update();
+}
+
+function opSymbol(o) { return { '÷':'÷','×':'×','-':'−','+':'+' }[o]||o; }
+
+function calc() {
+    if(!op||!prev) return;
+    const a=parseFloat(prev), b=parseFloat(display);
+    if(isNaN(a)||isNaN(b)){error('عدد نامعتبر');return;}
+    let r;
+    switch(op){
+        case '+': r=a+b; break; case '-': r=a-b; break; case '×': r=a*b; break;
+        case '÷': if(b===0){error('تقسیم بر صفر');return;} r=a/b; break;
+        default: return;
+    }
+    const rs=String(r);
+    addHistory(prev+' '+opSymbol(op)+' '+display+' =',rs);
+    display=rs; prev=''; op=null; resetNext=true; update();
+}
+
+function update(){ resultEl.textContent=display; resultEl.classList.remove('error'); }
+function error(msg){ resultEl.textContent='⚠️ '+msg; resultEl.classList.add('error'); setTimeout(()=>{resultEl.classList.remove('error');update();},2000); }
+function reset(){ display='0'; prev=''; op=null; resetNext=false; exprEl.textContent=''; update(); }
+function simpleClick(label){ if(label==='C')reset(); if(label==='⌫'){display=display.slice(0,-1)||'0';update();} }
+
+// ---------- تاریخچه ----------
+function addHistory(expr,res){ history.push({expr,res}); if(history.length>2000)history.shift(); renderHistory(); }
+function renderHistory(){
+    const q = document.getElementById('searchHistory').value.toLowerCase();
+    let filtered = history;
+    if(q) filtered = history.filter(h => h.expr.includes(q) || h.res.includes(q));
+    if(filtered.length===0){ historyEl.innerHTML='<div class="history-empty">'+lang[currentLang].empty+'</div>'; return; }
+    historyEl.innerHTML = filtered.slice().reverse().map(h =>
+        `<div class="history-item"><span class="h-expr">${h.expr}</span><span class="h-res">${h.res}</span></div>`
+    ).join('');
+}
+function clearHistory(){ history=[]; renderHistory(); }
+
+// ---------- کپی ----------
+function copyResult(){
+    const t=resultEl.textContent;
+    if(navigator.clipboard){ navigator.clipboard.writeText(t).then(()=>alert('✅ کپی شد!')).catch(()=>{});}
+    else{ const el=document.createElement('textarea'); el.value=t; document.body.appendChild(el); el.select(); document.execCommand('copy'); el.remove(); alert('✅ کپی شد!'); }
+}
+
+// ---------- تبدیل ----------
+const convTypes = [
+    { id:'vol', label:{fa:'حجم',en:'Volume',ar:'حجم'}, units:{fa:['لیتر','میلی‌لیتر','متر مکعب','گالن'],en:['Liter','mL','m³','Gallon'],ar:['لتر','مل','م³','غالون']}, factor:[1,0.001,1000,3.78541] },
+    { id:'area', label:{fa:'مساحت',en:'Area',ar:'مساحة'}, units:{fa:['متر مربع','کیلومتر مربع','هکتار','فوت مربع'],en:['m²','km²','Hectare','ft²'],ar:['م²','كم²','هكتار','قدم²']}, factor:[1,1e6,10000,0.092903] },
+    { id:'weight', label:{fa:'وزن',en:'Weight',ar:'وزن'}, units:{fa:['کیلوگرم','گرم','پوند','اونس'],en:['kg','g','lb','oz'],ar:['كغم','غم','باوند','أونصة']}, factor:[1,0.001,0.453592,0.0283495] },
+    { id:'length', label:{fa:'طول',en:'Length',ar:'طول'}, units:{fa:['متر','کیلومتر','مایل','فوت','اینچ'],en:['m','km','mile','ft','in'],ar:['م','كم','ميل','قدم','بوصة']}, factor:[1,1000,1609.34,0.3048,0.0254] },
+    { id:'speed', label:{fa:'سرعت',en:'Speed',ar:'سرعة'}, units:{fa:['متر بر ثانیه','کیلومتر بر ساعت','مایل بر ساعت','گره'],en:['m/s','km/h','mph','knot'],ar:['م/ث','كم/س','ميل/س','عقدة']}, factor:[1,0.277778,0.44704,0.514444] },
+    { id:'pressure', label:{fa:'فشار',en:'Pressure',ar:'ضغط'}, units:{fa:['پاسکال','بار','اتمسفر','psi'],en:['Pa','Bar','Atm','psi'],ar:['باسكال','بار','غلاف جوي','psi']}, factor:[1,100000,101325,6894.76] },
+    { id:'energy', label:{fa:'انرژی',en:'Energy',ar:'طاقة'}, units:{fa:['ژول','کالری','وات ساعت','eV'],en:['J','Cal','Wh','eV'],ar:['جول','سعرة','واط س','eV']}, factor:[1,4.184,3600,1.602e-19] },
+    { id:'temp', label:{fa:'دما',en:'Temperature',ar:'درجة حرارة'}, units:{fa:['سلسیوس','فارنهایت','کلوین'],en:['Celsius','Fahrenheit','Kelvin'],ar:['سيليسيوس','فهرنهايت','كلفن']}, factor:[1,1,1] }
+];
+
+function buildConverters(){
+    convertGrid.innerHTML='';
+    convTypes.forEach(t=>{
+        const div=document.createElement('div'); div.className='conv-item';
+        const label = t.label[currentLang] || t.label.fa;
+        const units = t.units[currentLang] || t.units.fa;
+        div.innerHTML=`<label>${label}</label>
+            <input type="number" id="${t.id}Val" placeholder="${currentLang==='fa'?'مقدار':currentLang==='en'?'Value':'القيمة'}" step="any">
+            <select id="${t.id}From">${units.map((u,i)=>`<option value="${i}">${u}</option>`).join('')}</select>
+            <select id="${t.id}To">${units.map((u,i)=>`<option value="${i}">${u}</option>`).join('')}</select>
+            <button onclick="convertUnit('${t.id}')">${currentLang==='fa'?'تبدیل':currentLang==='en'?'Convert':'تحويل'}</button>
+            <div class="conv-res" id="${t.id}Res"></div>`;
+        convertGrid.appendChild(div);
+    });
+}
+
+function convertUnit(id){
+    const val=parseFloat(document.getElementById(id+'Val').value);
+    if(isNaN(val)){ document.getElementById(id+'Res').textContent=currentLang==='fa'?'عدد وارد کنید':currentLang==='en'?'Enter number':'أدخل رقماً'; return; }
+    if(id==='temp'){
+        const from=parseInt(document.getElementById('tempFrom').value);
+        const to=parseInt(document.getElementById('tempTo').value);
+        let c; if(from===0)c=val; else if(from===1)c=(val-32)*5/9; else c=val-273.15;
+        let r; if(to===0)r=c; else if(to===1)r=c*9/5+32; else r=c+273.15;
+        document.getElementById('tempRes').textContent=r.toFixed(4);
+        addHistory(`${val} دما`, r.toFixed(4));
+        return;
+    }
+    const from=parseInt(document.getElementById(id+'From').value);
+    const to=parseInt(document.getElementById(id+'To').value);
+    const f = convTypes.find(t=>t.id===id).factor;
+    const result = val * f[from] / f[to];
+    document.getElementById(id+'Res').textContent=result.toExponential(6);
+    addHistory(`${val} ${id}`, result.toExponential(6));
+}
+
+// ---------- حالت‌ها ----------
+function switchMode(mode){
+    currentMode=mode;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector(`.tab[data-mode="${mode}"]`).classList.add('active');
+    convertPanel.classList.toggle('active', mode==='convert');
+    helpPanel.classList.toggle('active', mode==='help');
+    aboutPanel.classList.toggle('active', mode==='about');
+    reset();
+    renderButtons();
+}
+
+// ---------- زبان ----------
+function setLang(langCode){
+    currentLang=langCode;
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector(`.lang-btn[data-lang="${langCode}"]`).classList.add('active');
+    const L=lang[langCode];
+    document.querySelectorAll('.tab').forEach(tab=>{
+        const mode=tab.dataset.mode;
+        const labels={ fa:{basic:'پایه',sci:'علمی',convert:'تبدیل',help:'📖 راهنما',about:'ℹ️ درباره'},
+                       en:{basic:'Basic',sci:'Scientific',convert:'Convert',help:'📖 Help',about:'ℹ️ About'},
+                       ar:{basic:'أساسي',sci:'علمي',convert:'تحويل',help:'📖 دليل',about:'ℹ️ حول'} };
+        tab.textContent=labels[langCode]?.[mode]||labels.fa[mode];
+    });
+    document.getElementById('searchHistory').placeholder=L.search;
+    document.querySelector('.owner').textContent=L.owner;
+    document.querySelector('.footer').textContent=L.footer;
+    renderHistory();
+    buildConverters();
+}
+
+// ---------- تم ----------
+function toggleTheme(){
+    const themes=['dark','light','device-dark'];
+    let idx=themes.indexOf(theme); idx=(idx+1)%themes.length; theme=themes[idx];
+    document.body.className=theme;
+    document.getElementById('themeIcon').textContent=theme==='dark'?'🌙':theme==='light'?'☀️':'📱';
+}
+
+// ---------- کیبورد ----------
+document.addEventListener('keydown', e=>{
+    const k=e.key;
+    if(k>='0'&&k<='9'){ handleClick(k); e.preventDefault(); }
+    else if(k==='.'){ handleClick('.'); e.preventDefault(); }
+    else if(k==='+'){ handleClick('+'); e.preventDefault(); }
+    else if(k==='-'){ handleClick('-'); e.preventDefault(); }
+    else if(k==='*'){ handleClick('×'); e.preventDefault(); }
+    else if(k==='/'){ e.preventDefault(); handleClick('÷'); }
+    else if(k==='Enter'||k==='='){ handleClick('='); e.preventDefault(); }
+    else if(k==='Backspace'){ handleClick('⌫'); e.preventDefault(); }
+    else if(k==='Escape'){ handleClick('C'); e.preventDefault(); }
+    else if(k==='%'){ handleClick('%'); e.preventDefault(); }
+    else if(k==='('){ handleClick('('); e.preventDefault(); }
+    else if(k===')'){ handleClick(')'); e.preventDefault(); }
+});
+
+// ---------- شروع ----------
+renderButtons();
+reset();
+buildConverters();
+renderHistory();
+</script>
+</body>
+</html>
